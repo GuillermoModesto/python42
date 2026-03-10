@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 
 class Flower():
-    def __init__(self, name: str, height: int, age: int):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.height = height
         self.age = age
         self.growth = 0
         print(f"Created: {self.name} ({self.age}cm, {self.age} days)")
 
-    def grow(self):
+    def grow(self) -> None:
         self.height += 1
         self.growth += 1
 
-    def grow_age(self):
+    def grow_age(self) -> None:
         self.age += 1
 
-    def week(self):
+    def week(self) -> None:
         print("=== Day 1 ===")
         self.get_info()
         for i in range(0, 6):
@@ -25,7 +25,7 @@ class Flower():
         self.get_info()
         print(f"Growth this week: +{self.growth}cm")
 
-    def get_info(self):
+    def get_info(self) -> None:
         print(f"{self.name}: {self.height}cm, {self.age} days old")
 
 

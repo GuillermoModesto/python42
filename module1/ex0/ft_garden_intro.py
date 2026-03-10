@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-def ft_garden_intro():
+def ft_garden_intro() -> None:
     plant = "Rose"
     height = "25cm"
     age = "30 days"

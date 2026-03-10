@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 class Flower():
-    def __init__(self, name: str, height: int, age: int):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.height = height
         self.age = age
@@ -30,7 +30,7 @@ class Flower():
     def get_age(self) -> int:
         return self.age
 
-    def get_info(self):
+    def get_info(self) -> None:
         print(f"Current plant: {self.name} ({self.height}cm, {self.age} days)")
 
 
