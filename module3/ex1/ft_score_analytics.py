@@ -1,32 +1,27 @@
-import sys
+from sys import argv
 
 
 def main():
     print("=== Player Score Analytics ===")
-    scores = sys.argv[1:]
-    print(f"Scores processed: {scores}")
-    argc = len(scores)
-    print(f"Total players: {argc}")
+    if (len(argv) == 1):
+        print(
+            "No scores provided. Usage: python3 ft_score_analytics.py "
+            "<score1> <score2> ..."
+            )
+        return
     try:
+        scores = [int(x) for x in argv[1:]]
+        print(f"Scores processed: {scores}")
+        argc = len(scores)
+        print(f"Total players: {argc}")
         print(f"Total score: {sum(int(x) for x in scores)}")
-    except ValueError as e:
-        print(f"Total sum error: {e}")
-    try:
         print(f"Average score: {sum(int(x) for x in scores) / argc}")
-    except ValueError as e:
-        print(f"Average score error: {e}")
-    try:
-        print(f"High score: {int(max(scores))}")
-    except ValueError as e:
-        print(f"High score error: {e}")
-    try:
         print(f"Low score: {int(min(scores))}")
-    except ValueError as e:
-        print(f"Low score error: {e}")
-    try:
+        print(f"High score: {int(max(scores))}")
         print(f"Score range: {int(max(scores)) - int(min(scores))}")
-    except ValueError as e:
-        print(f"Score range error: {e}")
+    except ValueError:
+        print("Error: all values need to be a number.")
+
 
 if __name__ == "__main__":
     main()
