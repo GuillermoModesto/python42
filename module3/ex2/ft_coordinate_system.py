@@ -1,34 +1,44 @@
-from math import sqrt
+import math
+
+
+def get_player_pos():
+    while True:
+        coords = input("Enter new coordinates as floats in format 'x,y,z': ")
+        parts = coords.split(",")
+        if len(parts) != 3:
+            print("Invalid syntax")
+            continue
+        try:
+            res = []
+            for coord in parts:
+                res.append(round(float(coord), 1))
+            return tuple(res)
+        except ValueError as e:
+            print(
+                f"Error on parameter, {e}"
+                )
 
 
 def main():
     print("=== Game Coordinate System ===\n")
-    coords = tuple((10, 20, 5))
-    print(f"Position created: {coords}")
+    print("Get a first set of coordinates")
+    coords1 = get_player_pos()
+    print(f"Got a first tuple: {coords1}")
+    print(f"It includes: X={coords1[0]}, Y={coords1[1]}, Z={coords1[2]}")
+    to_center = math.sqrt((coords1[0])**2 + (coords1[1])**2 + (coords1[2]**2))
     print(
-        "Distance between (0, 0, 0) and "
-        f"{coords}: "
-        f"{sqrt((coords[0])**2 + (coords[1])**2 + (coords[2]**2))}\n"
+        "Distance to center: "
+        f"{round(to_center, 4)}\n"
         )
-    coords = "3,4,0"
-    print(f"Parsing coordinates: \"{coords}\"")
-    coords = tuple([int(x) for x in coords.split(",")])
-    print(f"Parsed position: {coords}")
-    print(
-        "Distance between (0, 0, 0) and "
-        f"{coords}: "
-        f"{sqrt((coords[0])**2 + (coords[1])**2 + (coords[2]**2))}\n"
+
+    print("Get a second set of coordinates")
+    coords2 = get_player_pos()
+    dist = math.sqrt(
+        (coords2[0] - coords1[0])**2
+        + (coords2[1] - coords1[1])**2
+        + (coords2[2] - coords1[2])**2
         )
-    coords2 = "abc,def,ghi"
-    print(f"Parsing invalid coordinates: \"{coords2}\"")
-    try:
-        coords2 = tuple([int(x) for x in coords2.split(",")])
-    except ValueError as e:
-        print(f"Error parsing coordinates: {e}")
-        print(f"Error details - Type: ValueError, Args: {e.args}")
-    print("\nUnpacking demonstration:")
-    print(f"Player at: x={coords[0]}, y={coords[1]}, z={coords[2]}")
-    print(f"Coordinates: X={coords[0]}, Y={coords[1]}, Z={coords[2]}")
+    print(f"Distance between the 2 sets of coordinates: {round(dist, 4)}")
 
 
 if __name__ == "__main__":
