@@ -1,7 +1,7 @@
 from typing import Generator
 
 
-def generate_events(n) -> Generator[int, None, None]:
+def generate_events(n) -> Generator[dict[str, object], None, None]:
     names = ["alice", "bob", "charlie", "bonk", "jesus christ its jason borne"]
     events = [
         "killed a monster", "found treasure", "level up", "found God",

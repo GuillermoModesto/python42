@@ -1,16 +1,16 @@
-from sys import argv
+import sys
 
 
 def main():
     print("=== Player Score Analytics ===")
-    if (len(argv) == 1):
+    if (len(sys.argv) == 1):
         print(
             "No scores provided. Usage: python3 ft_score_analytics.py "
             "<score1> <score2> ..."
             )
         return
     scores = []
-    for i in argv[1:]:
+    for i in sys.argv[1:]:
         try:
             scores.append(int(i))
         except ValueError:
