@@ -1,115 +1,36 @@
+import random
+
+
 def main():
-    unique_achievements = {
-        "first_kill", "level_10", "boss_slayer", "explorer",
-        "collector", "speed_runner", "sharpshooter",
-        "survivor", "strategist", "champion",
-        "veteran", "elite"
-    }
-    players = {
-        "alice": {
-            "score": 2300,
-            "is_active": True,
-            "achievements": 5,
-            "region": "north"
-        },
-        "bob": {
-            "score": 1800,
-            "is_active": True,
-            "achievements": 3,
-            "region": "east"
-        },
-        "charlie": {
-            "score": 2150,
-            "is_active": True,
-            "achievements": 7,
-            "region": "central"
-        },
-        "diana": {
-            "score": 2050,
-            "is_active": False,
-            "achievements": 4,
-            "region": "north"
-        },
-        "eve": {
-            "score": 950,
-            "is_active": False,
-            "achievements": 2,
-            "region": "west"
-        },
-        "frank": {
-            "score": 2750,
-            "is_active": False,
-            "achievements": 8,
-            "region": "south"
-        },
-        "grace": {
-            "score": 1600,
-            "is_active": True,
-            "achievements": 6,
-            "region": "east"
-        },
-        "henry": {
-            "score": 1200,
-            "is_active": False,
-            "achievements": 1,
-            "region": "north"
-        },
-        "ivy": {
-            "score": 3100,
-            "is_active": True,
-            "achievements": 9,
-            "region": "central"
-        },
-        "jack": {   
-            "score": 1990,
-            "is_active": False,
-            "achievements": 3,
-            "region": "west"
-        }
-    }
-    print("=== Game Analytics Dashboard ===\n")
-    print("=== List Comprehension Examples ===")
-    highscores = [
-        player for player, data
-        in players.items()
-        if data["score"] >= 2000
-        ]
-    print(f"High scorers (>2000): {highscores}")
-    d_highscores = [
-        data["score"] * 2 for data
-        in players.values()
-        if data["score"] >= 2000
-        ]
-    print(f"Scores doubled: {d_highscores}")
-    active = [
-        player for player, data
-        in players.items()
-        if data["is_active"]
+    print("=== Game Data Alchemist ===")
+
+    players = [
+        "Alice", "bob", "Charlie", "dylan",
+        "Emma", "Gregory", "john", "kevin", "Liam"
     ]
-    print(f"Active players: {active}")
-    print("\n=== Dict Comprehension Examples ===")
-    p_scores = {
-        player: data["score"] for player, data
-        in players.items()
-        if "score" in data
+    print(f"Initial list of players: {players}")
+
+    all_capitalized = [name.capitalize() for name in players]
+    print(f"New list with all names capitalized: {all_capitalized}")
+
+    capitalized_only = [name for name in players if name == name.capitalize()]
+    print(f"New list of capitalized names only: {capitalized_only}")
+
+    scores = {
+        name: random.randint(0, 1000)
+        for name in all_capitalized
     }
-    print(f"Player scores: {p_scores}")
-    score_c = {
-        "high": 0,
-        "medium": 0,
-        "low": 0
+    print(f"Score dict: {scores}")
+
+    average = round(sum(scores.values()) / len(scores), 2)
+    print(f"Score average is {average}")
+
+    high_scores = {
+        name: score
+        for name, score in scores.items()
+        if score > average
     }
-    for data in players.values():
-        if (data["score"] >= 2000):
-            score_c["high"] += 1
-        elif (data["score"] >= 1000):
-            score_c["medium"] += 1
-        else:
-            score_c["low"] += 1
-    print(f"Score categories: {score_c}")
-    active_reg = {
-        
-    }
+    print(f"High scores: {high_scores}")
 
 
 if __name__ == "__main__":
