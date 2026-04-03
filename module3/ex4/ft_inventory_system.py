@@ -13,7 +13,7 @@ def main():
         except IndexError:
             print(f"Error - invalid parameter {i}")
         except ValueError as e:
-            print(f"Quantity error for 'key': {e}")
+            print(f"Quantity error for {i.split(':')[0]}: {e}")
     print(f"Got inventory: {inventory}")
     print(f"Item list: {list(inventory.keys())}")
     total = 0
