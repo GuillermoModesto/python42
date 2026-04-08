@@ -2,7 +2,7 @@ from typing import Tuple
 
 
 def secure_archive(
-        file_name: str, action: str = "r", content: str = None
+        file_name: str, action: str = "r", content: str = ""
         ) -> Tuple[bool, str]:
     try:
         with open(file_name, action) as f:
@@ -35,7 +35,9 @@ def main():
     print(test3)
     print()
     print("Using 'secure_archive' to write previous content to a new file:")
-    test4 = secure_archive("ancient_fragment.txt", "w", "Content successfully written to file")
+    test4 = secure_archive(
+        "new_ancient_fragment.txt", "w", "Content successfully written to file"
+        )
     print(test4)
 
 
