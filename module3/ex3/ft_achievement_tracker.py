@@ -1,7 +1,7 @@
 import random
 
 
-def gen_player_achievements():
+def gen_player_achievements() -> set[str]:
     all_achievements = [
         'First Steps',
         'Speed Runner',

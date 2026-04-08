@@ -20,8 +20,9 @@ def main():
     for item in inventory.values():
         total += item
     print(f"Total quantity of the {len(inventory.keys())} items: {total}")
-    for key, value in inventory.items():
-        print(f"Item {key} represents ({value / total * 100}%)")
+    if (total != 0):
+        for key, value in inventory.items():
+            print(f"Item {key} represents ({value / total * 100}%)")
     most_abundant = ""
     i = 0
     for key, value in inventory.items():
