@@ -28,6 +28,8 @@ class NumericProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         if isinstance(data, (int, float)):
             return True
+        if not isinstance(data, list):
+            return False
         for i in data:
             if isinstance(i, (int, float)):
                 continue
@@ -55,6 +57,8 @@ class TextProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
         if isinstance(data, str):
             return True
+        if not isinstance(data, list):
+            return False
         for i in data:
             if isinstance(i, str):
                 continue
@@ -100,7 +104,7 @@ class LogProcessor(DataProcessor):
             for i in data:
                 self.ingested.append(i)
         else:
-            self.ingested.append(i)
+            self.ingested.append(data)
 
 
 def main():
@@ -124,6 +128,39 @@ def main():
     for i in range(3):
         pair = numbers.output()
         print(f"Numeric value {pair[0]}: {pair[1]}")
+
+    print()
+    text = TextProcessor()
+    print("Testing Text Processor...")
+    print(
+        f"Trying to validate input '42': {text.validate(42)}"
+    )
+    print("Processing data: ['Hello', 'Nexus', 'World']")
+    text.ingest(['Hello', 'Nexus', 'World'])
+    print("Extracting 1 value...")
+    pair = text.output()
+    print(f"Text value {pair[0]}: {pair[1]}")
+
+    print()
+    log = LogProcessor()
+    print("Testing Log Processor...")
+    print(
+        f"Trying to validate input 'Hello': {log.validate('Hello')}"
+    )
+    print(
+        "Processing data: "
+        "[{'log_level': 'NOTICE', 'log_message': 'Connection to server'}, "
+        "{'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}]"
+        )
+    log.ingest(
+        [{'log_level': 'NOTICE', 'log_message': 'Connection to server'},
+            {'log_level': 'ERROR', 'log_message': 'Unauthorized access!!'}]
+            )
+    print("Extracting 2 value...")
+    for i in range(2):
+        pair = log.output()
+        print(f"Log entry {pair[0]}: "
+              f"{pair[1]['log_level']}: {pair[1]['log_message']}")
 
 
 if __name__ == "__main__":
