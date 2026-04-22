@@ -17,7 +17,6 @@ class DataProcessor(ABC):
 
     def output(self) -> tuple[int, str]:
         res = tuple((self.count, self.ingested.pop(0)))
-        self.count -= 1
         return res
 
 
@@ -141,7 +140,7 @@ class DataStream():
             return
         for proc in self.processors:
             print(f"{proc.__class__.__name__}:"
-                  f" total {proc.count} items processed"
+                  f" total {proc.count} items processed,"
                   f" remaining: {len(proc.ingested)} on procesor"
                   )
 
@@ -184,6 +183,23 @@ def main():
          ],
         42, ['Hi', 'five']
     ])
+    dataStream.print_processors_stats()
+
+    print("\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    for proc in dataStream.processors:
+        count = 0
+        if isinstance(proc, NumericProcessor):
+            while count < 3:
+                proc.output()
+                count += 1
+        if isinstance(proc, TextProcessor):
+            while count < 2:
+                proc.output()
+                count += 1
+        if isinstance(proc, LogProcessor):
+            while count < 1:
+                proc.output()
+                count += 1
     dataStream.print_processors_stats()
 
 
