@@ -1,4 +1,4 @@
-from typing import Any, Union, List
+from typing import Any, Union, List, Protocol
 from abc import ABC, abstractmethod
 
 
@@ -16,8 +16,9 @@ class DataProcessor(ABC):
         pass
 
     def output(self) -> tuple[int, str]:
-        res = tuple((self.count, self.ingested.pop(0)))
-        return res
+        if len(self.ingested) != 0:
+            return tuple((self.count, self.ingested.pop(0)))
+        return None
 
 
 class NumericProcessor(DataProcessor):
@@ -112,6 +113,11 @@ class LogProcessor(DataProcessor):
             self.count += 1
 
 
+class ExportPlugin(Protocol):
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        pass
+
+
 class DataStream():
     def __init__(self):
         print("Initialize Data Stream...\n")
@@ -144,22 +150,42 @@ class DataStream():
                   f" total {proc.count} items processed,"
                   f" remaining: {len(proc.ingested)} on procesor"
                   )
+            
+    def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
+        for proc in self.processors:
+            i = 0
+            while i < nb:
+                plugin.process_output([proc.output()])
+                i += 1
+
+
+class CSVPlugin():
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        print("CSV Output:")
+        print(data)
+
+
+class JSONPlugin():
+    def process_output(self, data: list[tuple[int, str]]) -> None:
+        print("JSON Output:")
+        print(data)
 
 
 def main():
-    print("=== Code Nexus - Data Stream ===\n")
+    print("=== Code Nexus - Data Pipeline ==\n")
     dataStream = DataStream()
     dataStream.print_processors_stats()
-    print("\nRegistering Numeric Processor\n")
+    print("Registering Processors")
     dataStream.register_processor(NumericProcessor())
+    dataStream.register_processor(TextProcessor())
+    dataStream.register_processor(LogProcessor())
     print(
         "Send first batch of data on stream: "
         "['Hello world', [3.14, -1, 2.71], "
-        "[{'log_level': 'WARNING', 'log_message': "
-        "'Telnet access! Use ssh instead'}, "
-        "{'log_level': 'INFO', "
-        "'log_message': 'User wil isconnected'}], 42, ['Hi', 'five']]"
-    )
+        "[{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'}, "
+        "{'log_level': 'INFO', 'log_message': 'User wil isconnected'}], "
+        "42, ['Hi', 'five']]"
+        )
     dataStream.process_stream([
         'Hello world', [3.14, -1, 2.71],
         [{'log_level': 'WARNING',
@@ -169,39 +195,10 @@ def main():
          ],
         42, ['Hi', 'five']
     ])
-    dataStream.print_processors_stats()
-    print("\nRegistering other data processors")
-    dataStream.register_processor(TextProcessor())
-    dataStream.register_processor(LogProcessor())
-    print("Send the same batch again")
-    dataStream.process_stream([
-        'Hello world', [3.14, -1, 2.71],
-        [{'log_level': 'WARNING',
-         'log_message': 'Telnet access! Use ssh instead'},
-         {'log_level': 'INFO',
-         'log_message': 'User wil isconnected'}
-         ],
-        42, ['Hi', 'five']
-    ])
+    print()
     dataStream.print_processors_stats()
 
-    print("\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
-    for proc in dataStream.processors:
-        count = 0
-        if isinstance(proc, NumericProcessor):
-            while count < 3:
-                proc.output()
-                count += 1
-        if isinstance(proc, TextProcessor):
-            while count < 2:
-                proc.output()
-                count += 1
-        if isinstance(proc, LogProcessor):
-            while count < 1:
-                proc.output()
-                count += 1
-    dataStream.print_processors_stats()
-
+    dataStream.output_pipeline(3, CSVPlugin())
 
 if __name__ == "__main__":
     main()
