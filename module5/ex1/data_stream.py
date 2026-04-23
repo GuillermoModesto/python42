@@ -16,8 +16,8 @@ class DataProcessor(ABC):
         pass
 
     def output(self) -> tuple[int, str]:
-        res = tuple((self.count, self.ingested.pop(0)))
-        return res
+        if len(self.ingested) != 0:
+            return self.ingested.pop(0)
 
 
 class NumericProcessor(DataProcessor):
@@ -44,10 +44,10 @@ class NumericProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(str(i))
+                self.ingested.append(tuple((self.count, str(i))))
                 self.count += 1
         else:
-            self.ingested.append(str(data))
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 
@@ -75,10 +75,10 @@ class TextProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(i)
+                self.ingested.append(tuple((self.count, i)))
                 self.count += 1
         else:
-            self.ingested.append(str(data))
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 
@@ -105,10 +105,10 @@ class LogProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(i)
+                self.ingested.append(tuple((self.count, i)))
                 self.count += 1
         else:
-            self.ingested.append(data)
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 

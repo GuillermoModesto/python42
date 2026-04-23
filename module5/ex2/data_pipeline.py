@@ -17,8 +17,7 @@ class DataProcessor(ABC):
 
     def output(self) -> tuple[int, str]:
         if len(self.ingested) != 0:
-            return tuple((self.count, self.ingested.pop(0)))
-        return None
+            return self.ingested.pop(0)
 
 
 class NumericProcessor(DataProcessor):
@@ -45,10 +44,10 @@ class NumericProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(str(i))
+                self.ingested.append(tuple((self.count, str(i))))
                 self.count += 1
         else:
-            self.ingested.append(str(data))
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 
@@ -76,10 +75,10 @@ class TextProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(i)
+                self.ingested.append(tuple((self.count, i)))
                 self.count += 1
         else:
-            self.ingested.append(str(data))
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 
@@ -106,10 +105,10 @@ class LogProcessor(DataProcessor):
             raise Exception("Improper numeric data.")
         if isinstance(data, list):
             for i in data:
-                self.ingested.append(i)
+                self.ingested.append(tuple((self.count, i)))
                 self.count += 1
         else:
-            self.ingested.append(data)
+            self.ingested.append(tuple((self.count, str(data))))
             self.count += 1
 
 
@@ -154,28 +153,48 @@ class DataStream():
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
         for proc in self.processors:
             i = 0
+            ret = []
             while i < nb:
-                plugin.process_output([proc.output()])
+                out = proc.output()
+                if out is not None:
+                    ret.append(out)
                 i += 1
+            plugin.process_output(ret)
 
 
 class CSVPlugin():
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("CSV Output:")
-        print(data)
+        for i, ele in enumerate(data):
+            if not isinstance(ele[1], dict):
+                if i < len(data) - 1:
+                    print(f"{ele[1]},", end="")
+                else:
+                    print(ele[1])
+            else:
+                if i < len(data) - 1:
+                    print(f"{ele[1]['log_level']}: {ele[1]['log_message']},", end="")
+                else:
+                    print(f"{ele[1]['log_level']}: {ele[1]['log_message']}")
 
 
 class JSONPlugin():
     def process_output(self, data: list[tuple[int, str]]) -> None:
         print("JSON Output:")
-        print(data)
+        res = {}
+        for ele in data:
+            if not isinstance(ele[1], dict):
+                res.update({f"item_{ele[0]}":ele[1]})
+            else:
+                res.update({f"item_{ele[0]}":f"{ele[1]['log_level']}: {ele[1]['log_message']}"})
+        print(res)
 
 
 def main():
     print("=== Code Nexus - Data Pipeline ==\n")
     dataStream = DataStream()
     dataStream.print_processors_stats()
-    print("Registering Processors")
+    print("\nRegistering Processors\n")
     dataStream.register_processor(NumericProcessor())
     dataStream.register_processor(TextProcessor())
     dataStream.register_processor(LogProcessor())
@@ -184,7 +203,7 @@ def main():
         "['Hello world', [3.14, -1, 2.71], "
         "[{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'}, "
         "{'log_level': 'INFO', 'log_message': 'User wil isconnected'}], "
-        "42, ['Hi', 'five']]"
+        "42, ['Hi', 'five']]\n"
         )
     dataStream.process_stream([
         'Hello world', [3.14, -1, 2.71],
@@ -195,10 +214,31 @@ def main():
          ],
         42, ['Hi', 'five']
     ])
+    dataStream.print_processors_stats()
+
+    print()
+    dataStream.output_pipeline(3, CSVPlugin())
     print()
     dataStream.print_processors_stats()
 
-    dataStream.output_pipeline(3, CSVPlugin())
+    print("\nSend another batch of data: "
+        "[21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'], "
+        "[{'log_level': 'ERROR', 'log_message': '500 server crash'}, "
+        "{'log_level': 'NOTICE', 'log_message': 'Certificateexpires in 10 days'}], "
+        "[32, 42, 64, 84, 128, 168], 'World hello']\n"
+        )
+    dataStream.process_stream([
+        21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'], 
+        [{'log_level': 'ERROR', 'log_message': '500 server crash'}, 
+         {'log_level': 'NOTICE', 'log_message': 'Certificateexpires in 10 days'}], 
+         [32, 42, 64, 84, 128, 168], 'World hello'
+    ])
+    dataStream.print_processors_stats()
+    print("\nSend 5 processed data from each processor to a JSON plugin:")
+    dataStream.output_pipeline(5, JSONPlugin())
+
+    print()
+    dataStream.print_processors_stats()
 
 if __name__ == "__main__":
     main()
