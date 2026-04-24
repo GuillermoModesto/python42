@@ -119,7 +119,7 @@ class ExportPlugin(Protocol):
 
 
 class DataStream():
-    def __init__(self):
+    def __init__(self) -> None:
         print("Initialize Data Stream...\n")
         self.processors: List[DataProcessor] = []
 
@@ -191,7 +191,6 @@ class JSONPlugin():
                 res.update(
                     {f"item_{ele[0]}":
                      f"{ele[1]['log_level']}: {ele[1]['log_message']}"})
-                
         print(res)
 
 
@@ -206,7 +205,8 @@ def main():
     print(
         "Send first batch of data on stream: "
         "['Hello world', [3.14, -1, 2.71], "
-        "[{'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'}, "
+        "[{'log_level': 'WARNING', 'log_message':"
+        "'Telnet access! Use ssh instead'}, "
         "{'log_level': 'INFO', 'log_message': 'User wil isconnected'}], "
         "42, ['Hi', 'five']]\n"
         )

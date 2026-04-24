@@ -114,7 +114,7 @@ class LogProcessor(DataProcessor):
 
 
 class DataStream():
-    def __init__(self):
+    def __init__(self) -> None:
         print("Initialize Data Stream...\n")
         self.processors: List[DataProcessor] = []
 
@@ -186,7 +186,8 @@ def main():
     ])
     dataStream.print_processors_stats()
 
-    print("\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    print("\nConsume some elements from the data processors:"
+          "Numeric 3, Text 2, Log 1")
     for proc in dataStream.processors:
         count = 0
         if isinstance(proc, NumericProcessor):
