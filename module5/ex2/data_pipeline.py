@@ -15,9 +15,10 @@ class DataProcessor(ABC):
     def ingest(self, data: Any) -> None:
         pass
 
-    def output(self) -> tuple[int, str]:
+    def output(self) -> tuple[int, str] | None:
         if len(self.ingested) != 0:
             return self.ingested.pop(0)
+        return None
 
 
 class NumericProcessor(DataProcessor):
@@ -149,7 +150,7 @@ class DataStream():
                   f" total {proc.count} items processed,"
                   f" remaining: {len(proc.ingested)} on procesor"
                   )
-            
+
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
         for proc in self.processors:
             i = 0
@@ -173,7 +174,8 @@ class CSVPlugin():
                     print(ele[1])
             else:
                 if i < len(data) - 1:
-                    print(f"{ele[1]['log_level']}: {ele[1]['log_message']},", end="")
+                    print(f"{ele[1]['log_level']}:"
+                          f"{ele[1]['log_message']},", end="")
                 else:
                     print(f"{ele[1]['log_level']}: {ele[1]['log_message']}")
 
@@ -184,9 +186,12 @@ class JSONPlugin():
         res = {}
         for ele in data:
             if not isinstance(ele[1], dict):
-                res.update({f"item_{ele[0]}":ele[1]})
+                res.update({f"item_{ele[0]}": ele[1]})
             else:
-                res.update({f"item_{ele[0]}":f"{ele[1]['log_level']}: {ele[1]['log_message']}"})
+                res.update(
+                    {f"item_{ele[0]}":
+                     f"{ele[1]['log_level']}: {ele[1]['log_message']}"})
+                
         print(res)
 
 
@@ -222,16 +227,18 @@ def main():
     dataStream.print_processors_stats()
 
     print("\nSend another batch of data: "
-        "[21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'], "
-        "[{'log_level': 'ERROR', 'log_message': '500 server crash'}, "
-        "{'log_level': 'NOTICE', 'log_message': 'Certificateexpires in 10 days'}], "
-        "[32, 42, 64, 84, 128, 168], 'World hello']\n"
-        )
+          "[21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'], "
+          "[{'log_level': 'ERROR', 'log_message': '500 server crash'}, "
+          "{'log_level': 'NOTICE', 'log_message': "
+          "'Certificateexpires in 10 days'}], "
+          "[32, 42, 64, 84, 128, 168], 'World hello']\n"
+          )
     dataStream.process_stream([
-        21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'], 
-        [{'log_level': 'ERROR', 'log_message': '500 server crash'}, 
-         {'log_level': 'NOTICE', 'log_message': 'Certificateexpires in 10 days'}], 
-         [32, 42, 64, 84, 128, 168], 'World hello'
+        21, ['I love AI', 'LLMs are wonderful', 'Stay healthy'],
+        [{'log_level': 'ERROR', 'log_message': '500 server crash'},
+         {'log_level': 'NOTICE', 'log_message':
+          'Certificateexpires in 10 days'}],
+        [32, 42, 64, 84, 128, 168], 'World hello'
     ])
     dataStream.print_processors_stats()
     print("\nSend 5 processed data from each processor to a JSON plugin:")
@@ -239,6 +246,7 @@ def main():
 
     print()
     dataStream.print_processors_stats()
+
 
 if __name__ == "__main__":
     main()

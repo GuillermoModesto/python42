@@ -15,9 +15,10 @@ class DataProcessor(ABC):
     def ingest(self, data: Any) -> None:
         pass
 
-    def output(self) -> tuple[int, str]:
+    def output(self) -> tuple[int, str] | None:
         if len(self.ingested) != 0:
             return self.ingested.pop(0)
+        return None
 
 
 class NumericProcessor(DataProcessor):
