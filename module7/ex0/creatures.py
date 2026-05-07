@@ -5,6 +5,7 @@ class Creature(ABC):
     def __init__(self, name: str, type: str):
         self.name = name
         self.type = type
+        super().__init__()
 
     @abstractmethod
     def attack(self):
@@ -18,8 +19,7 @@ class Creature(ABC):
 
 class Flameling(Creature):
     def __init__(self):
-        self.name = "Flameling"
-        self.type = "Fire"
+        super().__init__("Flameling", "Fire")
 
     def attack(self):
         return ("Flameling uses Ember!")
@@ -27,8 +27,7 @@ class Flameling(Creature):
 
 class Pyrodon(Creature):
     def __init__(self):
-        self.name = "Pyrodon"
-        self.type = "Fire/Flying"
+        super().__init__("Pyrodon", "Fire/Flying")
 
     def attack(self):
         return ("Pyrodon uses Flamethrower!")
@@ -36,8 +35,7 @@ class Pyrodon(Creature):
 
 class Aquabub(Creature):
     def __init__(self):
-        self.name = "Aquabub"
-        self.type = "Water"
+        super().__init__("Aquabub", "Water")
 
     def attack(self):
         return ("Aquabub uses Water Gun!")
@@ -45,8 +43,7 @@ class Aquabub(Creature):
 
 class Torragon(Creature):
     def __init__(self):
-        self.name = "Torragon"
-        self.type = "Water"
+        super().__init__("Torragon", "Water")
 
     def attack(self):
         return ("Torragon uses Hydro Pump!")
