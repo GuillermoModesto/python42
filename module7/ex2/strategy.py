@@ -26,7 +26,7 @@ class NormalStrategy(BattleStrategy):
             raise InvalidBattleStrategyError(
                 f"Invalid Creature '{creature.name}' for this normal strategy"
             )
-        creature.attack()
+        print(creature.attack())
 
     def __str__(self) -> str:
         return "Normal"
@@ -43,9 +43,9 @@ class AggressiveStrategy(BattleStrategy):
             raise InvalidBattleStrategyError(
                 f"Invalid Creature '{creature.name}' for this aggressive strategy"
             )
-        creature.transform()
-        creature.attack()
-        creature.revert()
+        print(creature.transform())
+        print(creature.attack())
+        print(creature.revert())
 
     def __str__(self) -> str:
         return "Aggressive"
@@ -62,8 +62,8 @@ class DefensiveStrategy(BattleStrategy):
             raise InvalidBattleStrategyError(
                 f"Invalid Creature '{creature.name}' for this defensive strategy"
             )
-        creature.attack()
-        creature.heal()
+        print(creature.attack())
+        print(creature.heal())
 
     def __str__(self) -> str:
         return "Defensive"
