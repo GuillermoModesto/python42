@@ -7,6 +7,6 @@ def lead_to_gold():
     return (
         "Recipe transmuting Lead to Gold: "
         f"brew '{create_air()}' "
-        f"and {strength_potion()} "
+        f"and '{strength_potion()}' "
         f"mixed with '{create_fire()}'"
     )
