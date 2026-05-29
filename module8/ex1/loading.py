@@ -45,7 +45,7 @@ def show_install_help():
     print()
 
     print("Install with pip:")
-    print("pip install -r requirements.txt")
+    print("(uv) pip install -r requirements.txt")
     print()
 
     print("Install with Poetry:")
