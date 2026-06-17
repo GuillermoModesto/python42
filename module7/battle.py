@@ -1,5 +1,5 @@
 import ex0
-from ex0.creatures import CreatureFactory
+from ex0 import CreatureFactory
 
 
 def test_factory(factory: CreatureFactory) -> None:
