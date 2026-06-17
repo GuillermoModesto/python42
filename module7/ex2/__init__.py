@@ -3,5 +3,14 @@ from .strategy import (
     NormalStrategy,
     AggressiveStrategy,
     DefensiveStrategy,
-    InvalidBattleStrategyError,
+    InvalidBattleStrategyError
 )
+
+
+__all__ = [
+    "BattleStrategy",
+    "NormalStrategy",
+    "AggressiveStrategy",
+    "DefensiveStrategy",
+    "InvalidBattleStrategyError"
+]

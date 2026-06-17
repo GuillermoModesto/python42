@@ -1,7 +1,6 @@
 import ex1
 from ex0.creatures import CreatureFactory
 from ex1.capabilities import HealCapability, TransformCapability
-from ex0.creatures import Creature
 
 
 def test_healing_factory(factory: CreatureFactory) -> None:

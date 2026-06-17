@@ -4,7 +4,9 @@ import sys
 try:
     from dotenv import load_dotenv
 except ImportError:
-    print("Error: python-dotenv is not installed. Run: pip install python-dotenv")
+    print(
+        "Error: python-dotenv is not installed. Run: pip install python-dotenv"
+        )
     sys.exit(1)
 
 load_dotenv()
@@ -19,6 +21,7 @@ DEFAULTS = {
 
 REQUIRED = ["DATABASE_URL", "API_KEY", "ZION_ENDPOINT"]
 
+
 def load_config():
     config = {}
     missing = []
@@ -31,12 +34,14 @@ def load_config():
 
     return config, missing
 
+
 def mask(value, show_chars=4):
     if value is None:
         return "NOT SET"
     if len(value) <= show_chars:
         return "*" * len(value)
     return value[:show_chars] + "*" * (len(value) - show_chars)
+
 
 def format_db(url):
     if url is None:
@@ -47,10 +52,12 @@ def format_db(url):
         return f"{protocol}://****@{host_part}"
     return url  # no credentials visible
 
+
 def mode_banner(mode):
     if mode == "production":
         return "PRODUCTION"
     return "development"
+
 
 def security_checks(config):
     checks = []
@@ -59,10 +66,12 @@ def security_checks(config):
         source = f.read()
 
     import re
-    code_lines = [l for l in source.splitlines()
-                  if not l.strip().startswith("#") and not l.strip().startswith('"""')]
+    code_lines = [li for li in source.splitlines()
+                  if not li.strip().startswith("#")
+                  and not li.strip().startswith('"""')]
     code_only = "\n".join(code_lines)
-    hardcoded = bool(re.search(
+    hardcoded = bool(
+        re.search(
         r'(?<!["\'])(?:api_key|password|secret|token)\s*=\s*["\'][^"\']{6,}["\']',
         code_only, re.IGNORECASE
     ))
@@ -76,9 +85,12 @@ def security_checks(config):
                    else ".env file not found (copy .env.example to .env)"))
 
     can_override = "MATRIX_MODE" in os.environ or True  # always available
-    checks.append(("[OK]", "Production overrides available via environment variables"))
+    checks.append(
+        ("[OK]", "Production overrides available via environment variables")
+        )
 
     return checks
+
 
 def main():
     print("\nAccessing the Mainframe")
@@ -131,6 +143,7 @@ def main():
         print("The Oracle sees all configurations.")
 
     print()
+
 
 if __name__ == "__main__":
     main()
