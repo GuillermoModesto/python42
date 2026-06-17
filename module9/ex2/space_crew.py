@@ -103,7 +103,7 @@ class SpaceMission(BaseModel):
         return self
 
 
-def print_mission(mission):
+def print_mission(mission: SpaceMission) -> None:
     print(f"Mission: {mission.mission_name}")
     print(f"ID: {mission.mission_id}")
     print(f"Destination: {mission.destination}")
@@ -118,7 +118,7 @@ def print_mission(mission):
             )
 
 
-def main():
+def main() -> None:
     print("Space Mission Crew Validation")
     print("=========================================")
 
@@ -127,14 +127,14 @@ def main():
             mission_id="M2024_MARS",
             mission_name="Mars Colony Establishment",
             destination="Mars",
-            launch_date="2024-06-01T08:00:00",
+            launch_date="2024-06-01T08:00:00",  # type: ignore[arg-type]
             duration_days=900,
             budget_millions=2500.0,
             crew=[
                 CrewMember(
                     member_id="CM001",
                     name="Sarah Connor",
-                    rank="commander",
+                    rank=Rank.COMMANDER,
                     age=45,
                     specialization="Mission Command",
                     years_experience=20,
@@ -142,7 +142,7 @@ def main():
                 CrewMember(
                     member_id="CM002",
                     name="John Smith",
-                    rank="lieutenant",
+                    rank=Rank.LIEUTENANT,
                     age=34,
                     specialization="Navigation",
                     years_experience=10,
@@ -150,7 +150,7 @@ def main():
                 CrewMember(
                     member_id="CM003",
                     name="Alice Johnson",
-                    rank="officer",
+                    rank=Rank.OFFICER,
                     age=29,
                     specialization="Engineering",
                     years_experience=6,
@@ -167,14 +167,14 @@ def main():
             mission_id="M2024_FAIL",
             mission_name="Doomed Mission",
             destination="Jupiter",
-            launch_date="2024-06-01T08:00:00",
+            launch_date="2024-06-01T08:00:00",  # type: ignore[arg-type]
             duration_days=200,
             budget_millions=500.0,
             crew=[
                 CrewMember(
                     member_id="CM004",
                     name="Bob Brown",
-                    rank="cadet",
+                    rank=Rank.CADET,
                     age=22,
                     specialization="Maintenance",
                     years_experience=1,

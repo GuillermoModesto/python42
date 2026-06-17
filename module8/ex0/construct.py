@@ -1,19 +1,28 @@
-import sys
 import os
 import site
+import sys
 
 
-def in_virtualenv():
-    return (
-        (sys.base_prefix != sys.prefix)
-    )
+def in_virtualenv() -> bool:
+    return sys.base_prefix != sys.prefix
 
 
-def get_venv_name():
+def get_venv_name() -> str:
     return os.path.basename(sys.prefix)
 
 
-def main():
+def get_site_packages_path() -> str:
+    try:
+        site_packages: list[str] = site.getsitepackages()
+    except (AttributeError, OSError):
+        return "Unable to determine site-packages path"
+
+    if site_packages:
+        return site_packages[0]
+    return "Unable to determine site-packages path"
+
+
+def main() -> None:
     print()
 
     if in_virtualenv():
@@ -28,13 +37,7 @@ def main():
         print()
 
         print("Package installation path:")
-
-        site_packages = site.getsitepackages()
-
-        if site_packages:
-            print(site_packages[0])
-        else:
-            print("Unable to determine site-packages path")
+        print(get_site_packages_path())
 
     else:
         print("MATRIX STATUS: You're still plugged in")

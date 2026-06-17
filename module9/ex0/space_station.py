@@ -39,53 +39,54 @@ class SpaceStation(BaseModel):
     )
 
 
-def print_station(station):
+def print_station(station: SpaceStation) -> None:
     print(f"ID: {station.station_id}")
     print(f"Name: {station.name}")
-    print(f"Crew: {station.crew_size}")
-    print(f"Power: {station.power_level}")
-    print(f"Oxygen: {station.oxygen_level}")
+    print(f"Crew: {station.crew_size} people")
+    print(f"Power: {station.power_level}%")
+    print(f"Oxygen: {station.oxygen_level}%")
     print("Status: ", end="")
-    if (station.is_operational):
+    if station.is_operational:
         print("Operational")
     else:
         print("Non operational")
 
 
-def main():
+def main() -> None:
     print("Space Station Data Validation")
     print("========================================")
     try:
-        test = SpaceStation(
+        valid_station = SpaceStation(
             station_id='LGW125',
             name='Titan Mining Outpost',
             crew_size=6,
             power_level=76.4,
             oxygen_level=95.5,
-            last_maintenance='2023-07-11T00:00:00',
+            last_maintenance='2023-07-11T00:00:00',  # type: ignore[arg-type]
             is_operational=True,
             notes=None
         )
 
         print("Valid station created:")
-        print_station(test)
+        print_station(valid_station)
 
-    except ValidationError as e:
-        print(e)
+    except ValidationError as error:
+        print(error)
+
     try:
-        test = SpaceStation(
+        invalid_station = SpaceStation(
             station_id='LGW125',
             name='Titan Mining Outpost',
             crew_size=22,
             power_level=76.4,
             oxygen_level=95.5,
-            last_maintenance='2023-07-11T00:00:00',
+            last_maintenance='2023-07-11T00:00:00',  # type: ignore[arg-type]
             is_operational=True,
             notes=None
         )
 
         print("Valid station created:")
-        print_station(test)
+        print_station(invalid_station)
 
     except ValidationError:
         print("\n========================================")

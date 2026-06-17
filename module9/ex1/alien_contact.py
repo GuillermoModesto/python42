@@ -49,7 +49,7 @@ class AlienContact(BaseModel):
     is_verified: bool = False
 
     @model_validator(mode='after')
-    def validate_ID(self) -> "AlienContact":
+    def validate_id(self) -> "AlienContact":
         if not self.contact_id.startswith("AC"):
             raise ValueError("ID must start with AC")
         return self
@@ -62,8 +62,10 @@ class AlienContact(BaseModel):
 
     @model_validator(mode='after')
     def validate_telepath(self) -> "AlienContact":
+        # Telepathic contact needs at least 3 witnesses to be taken
+        # seriously: fail when there are FEWER than 3, not more.
         if (self.contact_type == ContactType.TELEPATHIC
-                and not self.witness_count < 3):
+                and self.witness_count < 3):
             raise ValueError(
                 "Telepathic contact requires at least 3 witnesses")
         return self
@@ -77,55 +79,58 @@ class AlienContact(BaseModel):
         return self
 
 
-def print_alien(alien):
+def print_alien(alien: AlienContact) -> None:
     print(f"ID: {alien.contact_id}")
-    print(f"Type: {alien.contact_type.name}")
+    print(f"Type: {alien.contact_type.value}")
     print(f"Location: {alien.location}")
-    print(f"Signal: {alien.signal_strength}")
-    print(f"Duration: {alien.duration_minutes}")
+    print(f"Signal: {alien.signal_strength}/10")
+    print(f"Duration: {alien.duration_minutes} minutes")
     print(f"Witnesses: {alien.witness_count}")
-    if (alien.message_received):
-        print(f"Message: {alien.message_received}")
+    if alien.message_received:
+        print(f"Message: '{alien.message_received}'")
 
 
-def main():
+def main() -> None:
     print("Alien Contact Log Validation")
     print("======================================")
     try:
-        test = AlienContact(
+        valid_contact = AlienContact(
             contact_id='AC_2024_001',
-            timestamp='2024-01-20T00:00:00',
-            location='Atacama Desert, Chile',
-            contact_type='telepathic',
-            signal_strength=9.6,
-            duration_minutes=99,
-            witness_count=2,
+            timestamp='2024-01-20T00:00:00',  # type: ignore[arg-type]
+            location='Area 51, Nevada',
+            contact_type=ContactType.RADIO,
+            signal_strength=8.5,
+            duration_minutes=45,
+            witness_count=5,
             message_received='Greetings from Zeta Reticuli',
             is_verified=False
         )
 
-        print("Valid alien contact:")
-        print_alien(test)
+        print("Valid contact report:")
+        print_alien(valid_contact)
 
-    except ValidationError as e:
-        print(e)
+    except ValidationError as error:
+        print(error)
+
     try:
-        test = AlienContact(
-            contact_id='AC_2024_001',
-            timestamp='2024-01-20T00:00:00',
-            location='Atacama Desert, Chile',
-            contact_type='visual',
-            signal_strength=9.6,
-            duration_minutes=99,
-            witness_count=11,
+        # Telepathic contact with only 2 witnesses: must fail the
+        # "at least 3 witnesses" rule.
+        invalid_contact = AlienContact(
+            contact_id='AC_2024_002',
+            timestamp='2024-02-14T00:00:00',  # type: ignore[arg-type]
+            location='Roswell, New Mexico',
+            contact_type=ContactType.TELEPATHIC,
+            signal_strength=6.0,
+            duration_minutes=30,
+            witness_count=2,
             is_verified=False
         )
 
-        print("Valid station created:")
-        print_alien(test)
+        print("Valid contact report:")
+        print_alien(invalid_contact)
 
     except ValidationError:
-        print("\n========================================")
+        print("\n======================================")
         print("Expected validation error:")
         print("Telepathic contact requires at least 3 witnesses")
 
