@@ -1,8 +1,7 @@
 import ex0
-from ex0 import CreatureFactory
 
 
-def test_factory(factory: CreatureFactory) -> None:
+def test_factory(factory: ex0.CreatureFactory) -> None:
     print("Testing factory")
     base = factory.create_base()
     evolved = factory.create_evolved()
@@ -13,8 +12,8 @@ def test_factory(factory: CreatureFactory) -> None:
 
 
 def test_battle(
-    factory_a: CreatureFactory,
-    factory_b: CreatureFactory
+    factory_a: ex0.CreatureFactory,
+    factory_b: ex0.CreatureFactory
 ) -> None:
     print("Testing battle")
     creature_a = factory_a.create_base()

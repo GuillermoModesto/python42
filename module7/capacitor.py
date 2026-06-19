@@ -1,6 +1,5 @@
 import ex1
 from ex0 import CreatureFactory
-from ex1 import HealCapability, TransformCapability
 
 
 def test_healing_factory(factory: CreatureFactory) -> None:
@@ -11,7 +10,7 @@ def test_healing_factory(factory: CreatureFactory) -> None:
         print(f" {label}:")
         print(creature.describe())
         print(creature.attack())
-        if isinstance(creature, HealCapability):
+        if isinstance(creature, ex1.HealCapability):
             print(creature.heal())
 
 
@@ -23,7 +22,7 @@ def test_transform_factory(factory: CreatureFactory) -> None:
         print(f" {label}:")
         print(creature.describe())
         print(creature.attack())
-        if isinstance(creature, TransformCapability):
+        if isinstance(creature, ex1.TransformCapability):
             print(creature.transform())
             print(creature.attack())
             print(creature.revert())

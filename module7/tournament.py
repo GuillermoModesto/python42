@@ -1,10 +1,10 @@
-from typing import Any, List, Tuple
+from typing import List, Tuple
 import ex0
 import ex1
 import ex2
 
 
-Opponent = Tuple[Any, ex2.BattleStrategy]
+Opponent = Tuple[ex0.CreatureFactory, ex2.BattleStrategy]
 
 
 def opponent_name(opponent: Opponent) -> str:
