@@ -1,5 +1,4 @@
 import os
-import re
 import sys
 
 try:
@@ -25,10 +24,8 @@ DEFAULTS: Config = {
 
 REQUIRED: list[str] = ["DATABASE_URL", "API_KEY", "ZION_ENDPOINT"]
 
-SECRET_PATTERN = re.compile(
-    r'(?<!["\'])(?:api_key|password|secret|token)\s*=\s*["\'][^"\']{6,}["\']',
-    re.IGNORECASE,
-)
+SECRET_KEYWORDS: tuple[str, ...] = ("api_key", "password", "secret", "token")
+MIN_SECRET_LENGTH = 6
 
 
 def load_config() -> tuple[Config, list[str]]:
@@ -59,13 +56,43 @@ def format_db(url: str | None) -> str:
         protocol, rest = url.split("://", 1)
         host_part = rest.split("@", 1)[1]
         return f"{protocol}://****@{host_part}"
-    return url  # no credentials visible
+    return url
 
 
 def mode_banner(mode: str | None) -> str:
     if mode == "production":
         return "PRODUCTION"
     return "development"
+
+
+def _is_quoted_literal(text: str, min_length: int = MIN_SECRET_LENGTH) -> bool:
+    text = text.strip()
+    if len(text) < 2:
+        return False
+
+    quote = text[0]
+    if quote not in ("'", '"') or not text.endswith(quote):
+        return False
+
+    inner = text[1:-1]
+    return len(inner) >= min_length
+
+
+def _assigns_secret_literal(line: str) -> bool:
+    if "=" not in line or any(op in line for op in ("==", "!=", "<=", ">=")):
+        return False
+
+    name_part, _, value_part = line.partition("=")
+    name = name_part.strip()
+
+    if not name or name.startswith(("'", '"')):
+        return False
+
+    lowered_name = name.lower()
+    has_secret_name = any(
+        keyword in lowered_name for keyword in SECRET_KEYWORDS
+    )
+    return has_secret_name and _is_quoted_literal(value_part)
 
 
 def has_hardcoded_secret() -> bool:
@@ -75,13 +102,14 @@ def has_hardcoded_secret() -> bool:
     except OSError:
         return False
 
-    code_lines = [
-        line for line in source.splitlines()
-        if not line.strip().startswith("#")
-        and not line.strip().startswith('"""')
-    ]
-    code_only = "\n".join(code_lines)
-    return bool(SECRET_PATTERN.search(code_only))
+    for raw_line in source.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or line.startswith('"""'):
+            continue
+        if _assigns_secret_literal(line):
+            return True
+
+    return False
 
 
 def security_checks(config: Config) -> list[tuple[str, str]]:
@@ -120,7 +148,12 @@ def main() -> None:
     print(f"  Mode:      {mode_banner(mode)}")
 
     if mode == "production":
-        print("  Database:  Connected to PRODUCTION instance")
+        db_status = (
+            "Connected to PRODUCTION instance"
+            if config["DATABASE_URL"]
+            else "NOT SET"
+        )
+        print(f"  Database:  {db_status}")
         print(f"  API Access: Key → {mask(config['API_KEY'])}")
         print(f"  Log Level: {config['LOG_LEVEL']}")
         print(f"  Zion Network: {config['ZION_ENDPOINT'] or 'NOT SET'}")
